@@ -35,7 +35,7 @@ RUN apt-get update && apt-get install -y ninja-build \
  && pip install --no-build-isolation diso
 
 # Copia solo il file requirements.txt per ottimizzare il caching
-COPY requirements.txt /tmp/
+COPY requirements* /tmp/
 
 # Installa le dipendenze senza invalidare la cache quando il codice cambia
 RUN pip install -r /tmp/requirements.txt
