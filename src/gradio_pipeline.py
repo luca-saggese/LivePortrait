@@ -242,7 +242,7 @@ class GradioPipeline(LivePortraitPipeline):
 
             output_path, output_path_concat = self.execute(self.args)
             gr.Info("Run successfully!", duration=2)
-            self.cleanup()
+            #self.cleanup()
             if output_path.endswith(".jpg"):
                 return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), output_path, gr.update(visible=True), output_path_concat, gr.update(visible=True)
             else:
