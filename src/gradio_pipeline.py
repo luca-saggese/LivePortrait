@@ -24,6 +24,9 @@ from .utils.video import get_fps, has_audio_stream, concat_frames, images2video,
 from .utils.helper import is_square_video, mkdir, dct2device, basename
 from .utils.retargeting_utils import calc_eye_close_ratio, calc_lip_close_ratio
 
+import gc
+
+
 
 def update_args(args, user_args):
     """update the args according to user inputs
@@ -42,6 +45,18 @@ class GradioPipeline(LivePortraitPipeline):
         super().__init__(inference_cfg, crop_cfg)
         # self.live_portrait_wrapper = self.live_portrait_wrapper
         self.args = args
+
+    def cleanup(self):
+        print("[INFO] Cleanup VRAM...")
+        try:
+            self.live_portrait_wrapper.to("cpu")
+            if hasattr(self.cropper, "model"):
+                self.cropper.model.to("cpu")
+            self.cropper = None
+        except Exception as e:
+            print(f"[WARNING] Cleanup failed: {e}")
+        torch.cuda.empty_cache()
+        gc.collect()
 
     @torch.no_grad()
     def update_delta_new_eyeball_direction(self, eyeball_direction_x, eyeball_direction_y, delta_new, **kwargs):
@@ -220,12 +235,14 @@ class GradioPipeline(LivePortraitPipeline):
 
             output_path, output_path_concat = self.execute(self.args)
             gr.Info("Run successfully!", duration=2)
+            self.cleanup()
             if output_path.endswith(".jpg"):
                 return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), output_path, gr.update(visible=True), output_path_concat, gr.update(visible=True)
             else:
                 return output_path, gr.update(visible=True), output_path_concat, gr.update(visible=True), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False)
         else:
             raise gr.Error("Please upload the source portrait or source video, and driving video 🤗🤗🤗", duration=5)
+
 
     @torch.no_grad()
     def execute_image_retargeting(
@@ -330,6 +347,7 @@ class GradioPipeline(LivePortraitPipeline):
                 out_to_ori_blend = paste_back(out, crop_M_c2o, img_rgb, mask_ori)
             else:
                 out_to_ori_blend = out
+            self.cleanup()
             return out, out_to_ori_blend
 
     @torch.no_grad()
