@@ -49,16 +49,16 @@ class GradioPipeline(LivePortraitPipeline):
     def cleanup(self):
         print("[INFO] Cleanup VRAM...")
         try:
-            self.live_portrait.appearance_feature_extractor.to("cpu")
-            self.live_portrait.motion_extractor.to("cpu")
-            self.live_portrait.warping_module.to("cpu")
-            self.live_portrait.spade_generator.to("cpu")
-            if self.live_portrait.stitching_retargeting_module is not None:
-                if isinstance(self.live_portrait.stitching_retargeting_module, dict):
-                    for k in self.live_portrait.stitching_retargeting_module:
-                        self.live_portrait.stitching_retargeting_module[k].to("cpu")
+            self.live_portrait_wrapper.appearance_feature_extractor.to("cpu")
+            self.live_portrait_wrapper.motion_extractor.to("cpu")
+            self.live_portrait_wrapper.warping_module.to("cpu")
+            self.live_portrait_wrapper.spade_generator.to("cpu")
+            if self.live_portrait_wrapper.stitching_retargeting_module is not None:
+                if isinstance(self.live_portrait_wrapper.stitching_retargeting_module, dict):
+                    for k in self.live_portrait_wrapper.stitching_retargeting_module:
+                        self.live_portrait_wrapper.stitching_retargeting_module[k].to("cpu")
                 else:
-                    self.live_portrait.stitching_retargeting_module.to("cpu")
+                    self.live_portrait_wrapper.stitching_retargeting_module.to("cpu")
         except Exception as e:
             print(f"[Warning] cleanup_liveportrait failed: {e}")
         torch.cuda.empty_cache()
