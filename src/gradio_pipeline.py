@@ -55,9 +55,8 @@ class GradioPipeline(LivePortraitPipeline):
         torch.cuda.empty_cache()
         gc.collect()
 
-    def restore(self):
+    def restore(self, device):
         """Restore model to correct device after cleanup"""
-        device = self.live_portrait_wrapper.device
         self.live_portrait_wrapper.to(device)
 
 
@@ -238,8 +237,9 @@ class GradioPipeline(LivePortraitPipeline):
 
             output_path, output_path_concat = self.execute(self.args)
             gr.Info("Run successfully!", duration=2)
+            device = self.live_portrait_wrapper.device
             self.cleanup()
-            self.restore()
+            self.restore(device)
             if output_path.endswith(".jpg"):
                 return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), output_path, gr.update(visible=True), output_path_concat, gr.update(visible=True)
             else:
