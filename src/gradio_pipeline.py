@@ -49,16 +49,16 @@ class GradioPipeline(LivePortraitPipeline):
     def cleanup(self):
         print("[INFO] Cleanup VRAM...")
         try:
-            self.live_portrait_wrapper.appearance_feature_extractor.to("cpu")
-            self.live_portrait_wrapper.motion_extractor.to("cpu")
-            self.live_portrait_wrapper.warping_module.to("cpu")
-            self.live_portrait_wrapper.spade_generator.to("cpu")
+            self.live_portrait_wrapper.appearance_feature_extractor.to("cpu").float()
+            self.live_portrait_wrapper.motion_extractor.to("cpu").float()
+            self.live_portrait_wrapper.warping_module.to("cpu").float()
+            self.live_portrait_wrapper.spade_generator.to("cpu").float()
             if self.live_portrait_wrapper.stitching_retargeting_module is not None:
                 if isinstance(self.live_portrait_wrapper.stitching_retargeting_module, dict):
                     for k in self.live_portrait_wrapper.stitching_retargeting_module:
-                        self.live_portrait_wrapper.stitching_retargeting_module[k].to("cpu")
+                        self.live_portrait_wrapper.stitching_retargeting_module[k].to("cpu").float()
                 else:
-                    self.live_portrait_wrapper.stitching_retargeting_module.to("cpu")
+                    self.live_portrait_wrapper.stitching_retargeting_module.to("cpu").float()
         except Exception as e:
             print(f"[Warning] cleanup_liveportrait failed: {e}")
         torch.cuda.empty_cache()
@@ -242,7 +242,7 @@ class GradioPipeline(LivePortraitPipeline):
 
             output_path, output_path_concat = self.execute(self.args)
             gr.Info("Run successfully!", duration=2)
-            #self.cleanup()
+            self.cleanup()
             if output_path.endswith(".jpg"):
                 return gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), gr.update(visible=False), output_path, gr.update(visible=True), output_path_concat, gr.update(visible=True)
             else:
