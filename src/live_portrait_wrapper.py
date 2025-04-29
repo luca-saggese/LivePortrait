@@ -123,6 +123,7 @@ class LivePortraitWrapper(object):
         """ get the appearance feature of the image by F
         x: Bx3xHxW, normalized to 0~1
         """
+        x = x.to(dtype=next(self.appearance_feature_extractor.parameters()).dtype, device=next(self.appearance_feature_extractor.parameters()).device)
         with torch.no_grad(), self.inference_ctx():
             feature_3d = self.appearance_feature_extractor(x)
 
