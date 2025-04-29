@@ -68,4 +68,4 @@ RUN pip install --upgrade gradio
 EXPOSE 8080
 
 # Comando di default per avviare il server Gradio
-CMD ["python3", "app.py", "--share", "--server-port", "8080"]
+CMD ["python3", "app.py", "--share", "--server_port", "8080", "--server_name", "0.0.0.0"]
