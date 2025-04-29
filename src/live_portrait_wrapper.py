@@ -184,6 +184,19 @@ class LivePortraitWrapper(object):
 
         return source_kp_info, source_rotation, source_feature_3d, driving_first_frame_kp_info, driving_first_frame_rotation
 
+    def to(self, device):
+        self.motion_extractor.to(device)
+        self.appearance_feature_extractor.to(device)
+        self.warping_module.to(device)
+        self.spade_generator.to(device)
+        if self.stitching_retargeting_module is not None:
+            if isinstance(self.stitching_retargeting_module, dict):
+                for k in self.stitching_retargeting_module:
+                    self.stitching_retargeting_module[k].to(device)
+            else:
+                self.stitching_retargeting_module.to(device)
+        self.device = device
+
     def transform_keypoint(self, kp_info: dict):
         """
         transform the implicit keypoints with the pose, shift, and expression deformation
