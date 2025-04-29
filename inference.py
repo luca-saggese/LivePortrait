@@ -34,7 +34,7 @@ def fast_check_args(args: ArgumentConfig):
 
 
 def download_models():
-    if not osp.exists("pretrained_weights"):
+    if not osp.exists("pretrained_weights") or not os.listdir("pretrained_weights"):
         print("Downloading pretrained models from Hugging Face...")
         try:
             subprocess.run([
