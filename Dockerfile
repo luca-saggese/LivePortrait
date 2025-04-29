@@ -62,8 +62,10 @@ ENV HF_HOME=/huggingface
 
 #RUN source patchtransformers.sh
 
+RUN pip install --upgrade gradio
+
 # Espone la porta per Gradio
 EXPOSE 8080
 
 # Comando di default per avviare il server Gradio
-CMD ["python3", "inference.py", "--share", "--server_port", "8080"]
+CMD ["python3", "app.py", "--share", "--server-port", "8080"]

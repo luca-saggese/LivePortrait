@@ -126,7 +126,7 @@ retargeting_output_image_paste_back = gr.Image(type="numpy")
 output_video = gr.Video(autoplay=False)
 output_video_paste_back = gr.Video(autoplay=False)
 
-with gr.Blocks(theme=gr.themes.Soft(font=[gr.themes.GoogleFont("Plus Jakarta Sans")])) as demo:
+with gr.Blocks(title="LivePortrait", theme=gr.themes.Soft(font=[gr.themes.GoogleFont("Plus Jakarta Sans")])) as demo:
     gr.HTML(load_description(title_md))
 
     gr.Markdown(load_description("assets/gradio/gradio_description_upload.md"))
