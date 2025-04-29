@@ -27,6 +27,21 @@ def fast_check_ffmpeg():
     except:
         return False
 
+def download_models():
+    if not osp.exists("pretrained_weights") or not os.listdir("pretrained_weights"):
+        print("Downloading pretrained models from Hugging Face...")
+        try:
+            subprocess.run([
+                "huggingface-cli", "download", "KwaiVGI/LivePortrait",
+                "--local-dir", "pretrained_weights",
+                "--exclude", "*.git*", "README.md", "docs"
+            ], check=True)
+            print("Model download completed.")
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"Failed to download models: {e}")
+    else:
+        print("Pretrained models already exist, skipping download.")
+
 
 # set tyro theme
 tyro.extras.set_accent_color("bright_cyan")
@@ -44,6 +59,8 @@ if not fast_check_ffmpeg():
 inference_cfg = partial_fields(InferenceConfig, args.__dict__)  # use attribute of args to initial InferenceConfig
 crop_cfg = partial_fields(CropConfig, args.__dict__)  # use attribute of args to initial CropConfig
 # global_tab_selection = None
+
+download_models()
 
 gradio_pipeline = GradioPipeline(
     inference_cfg=inference_cfg,

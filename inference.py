@@ -33,20 +33,7 @@ def fast_check_args(args: ArgumentConfig):
         raise FileNotFoundError(f"driving info not found: {args.driving}")
 
 
-def download_models():
-    if not osp.exists("pretrained_weights") or not os.listdir("pretrained_weights"):
-        print("Downloading pretrained models from Hugging Face...")
-        try:
-            subprocess.run([
-                "huggingface-cli", "download", "KwaiVGI/LivePortrait",
-                "--local-dir", "pretrained_weights",
-                "--exclude", "*.git*", "README.md", "docs"
-            ], check=True)
-            print("Model download completed.")
-        except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"Failed to download models: {e}")
-    else:
-        print("Pretrained models already exist, skipping download.")
+
 
 
 def main():
@@ -63,8 +50,7 @@ def main():
             "FFmpeg is not installed. Please install FFmpeg (including ffmpeg and ffprobe) before running this script. https://ffmpeg.org/download.html"
         )
 
-    # Download pretrained models if not present
-    download_models()
+
 
     fast_check_args(args)
 
