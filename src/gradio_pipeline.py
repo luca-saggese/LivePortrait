@@ -49,14 +49,21 @@ class GradioPipeline(LivePortraitPipeline):
     def cleanup(self):
         print("[INFO] Cleanup VRAM...")
         try:
-            self.live_portrait_wrapper.to("cpu")
-            if hasattr(self.cropper, "model"):
-                self.cropper.model.to("cpu")
-            self.cropper = None
+            self.live_portrait.appearance_feature_extractor.to("cpu")
+            self.live_portrait.motion_extractor.to("cpu")
+            self.live_portrait.warping_module.to("cpu")
+            self.live_portrait.spade_generator.to("cpu")
+            if self.live_portrait.stitching_retargeting_module is not None:
+                if isinstance(self.live_portrait.stitching_retargeting_module, dict):
+                    for k in self.live_portrait.stitching_retargeting_module:
+                        self.live_portrait.stitching_retargeting_module[k].to("cpu")
+                else:
+                    self.live_portrait.stitching_retargeting_module.to("cpu")
         except Exception as e:
-            print(f"[WARNING] Cleanup failed: {e}")
+            print(f"[Warning] cleanup_liveportrait failed: {e}")
         torch.cuda.empty_cache()
         gc.collect()
+
 
     @torch.no_grad()
     def update_delta_new_eyeball_direction(self, eyeball_direction_x, eyeball_direction_y, delta_new, **kwargs):
